@@ -1,7 +1,22 @@
 import tkinter as t1
 from tkinter import *
 from tkinter import ttk
+from tkinter import font
+import Job
+
 window = t1.Tk()
+textFont = font.Font(window, size=9, family = '맑은 고딕')
+
+def jobSecch():
+    select = job.get()#콤보박스에서 얻어옴
+    returnList = []
+    if select == "경영·사무·금융·보험":
+        returnList = Job.ConnectServer("&occupation=01")#job.py 에 보냄
+    elif select == '연구 및 공학기술':
+        returnList = Job.ConnectServer("&occupation=02")
+    for data in Job.dataList:
+        companyinfoLabel.insert(INSERT, data)
+        companyinfoLabel.insert(INSERT, '\n\n')
 
 window.geometry("1000x700")
 window.title("Intern Serch")
@@ -29,22 +44,27 @@ l1.grid(row=0, column=0)
 l2.grid(row=0, column=2)
 l3.grid(row=0, column=4)
 
-e1 = Entry(Serch)
-e2 = Entry(Serch)
-e3 = Entry(Serch)
-e1.grid(row=0, column=1)
-e2.grid(row=0, column=3)
-e3.grid(row=0, column=5)
+job = ttk.Combobox(Serch)
+job['values'] = ('경영·사무·금융·보험', '연구 및 공학기술', '교육·법률·사회복지·경찰·소방 및 군인', '보건·의료', '예술·디자인·방송·스포츠',
+'영업·판매·운전·운송')
 
-b1 = Button(Serch, text="검색")
+local = ttk.Combobox(Serch)
+local['values'] = ('서울', '인천', '강원도', '충청도', '전라도', '경상도',)
+school =ttk.Combobox(Serch)
+school['values'] = ('무관', '2년제', '4년체')
+
+job.grid(row=0, column=1)
+local.grid(row=0, column=3)
+school.grid(row=0, column=5)
+
+b1 = Button(Serch, text="검색",command = jobSecch)
 b1.grid(row=1, column=0)
 
-SerchInfo = ttk.LabelFrame(tab1,text='회사목록')
-SerchInfo.grid(row=2,column=0)
-l1 = Label(SerchInfo, text="직종")
-l2 = Label(SerchInfo, text="지역")
-l3 = Label(SerchInfo, text="학력")
-l1.grid(row=0, column=0)
-l2.grid(row=0, column=2)
-l3.grid(row=0, column=4)
+
+companyinfo = ttk.LabelFrame(tab1,text='회사목록')
+companyinfo.grid(row=2,column=0)
+companyinfof = ttk.LabelFrame(companyinfo)
+companyinfof.grid(row=2,column=0)
+companyinfoLabel = Text(companyinfof , font = textFont,width = 100, height = 100)
+companyinfoLabel.grid(row=0,column=0)
 window.mainloop()
