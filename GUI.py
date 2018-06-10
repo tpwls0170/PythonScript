@@ -1,7 +1,12 @@
 import tkinter as t1
+import smtplib
 from tkinter import *
 from tkinter import ttk
 from tkinter import font
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+
 import Job
 
 window = t1.Tk()
@@ -316,20 +321,12 @@ def jobSecch():
         companyinfoLabel.insert(INSERT, data)
         companyinfoLabel.insert(INSERT, '\n\n')
 
-window.geometry("1000x700")
+window.geometry("600x700")
 window.title("Intern Serch")
 tabControl = ttk.Notebook(window)
 
 tab1 = ttk.Frame(tabControl)
 tabControl.add(tab1, text='검색')
-tabControl.pack(expand=1, fill="both")
-
-tab2 = ttk.Frame(tabControl)
-tabControl.add(tab2, text='메일')
-tabControl.pack(expand=1, fill="both")
-
-tab3 = ttk.Frame(tabControl)
-tabControl.add(tab3, text='위치')
 tabControl.pack(expand=1, fill="both")
 
 Serch = ttk.LabelFrame(tab1,text='정보검색')
@@ -359,9 +356,67 @@ b1 = Button(Serch, text="검색",command = jobSecch)
 b1.grid(row=1, column=0)
 
 companyinfo = ttk.LabelFrame(tab1,text='회사목록')
-companyinfo.grid(row=2,column=0)
+companyinfo.grid(row=5,column=0)
 companyinfof = ttk.LabelFrame(companyinfo)
-companyinfof.grid(row=2,column=0)
-companyinfoLabel = Text(companyinfof , font = textFont,width = 100, height = 100)
+companyinfof.grid(row=5,column=0)
+companyinfoLabel = Text(companyinfof , font = textFont,width = 80, height = 35)
 companyinfoLabel.grid(row=0,column=0)
+#=======================================================================================================================================
+
+tab2 = ttk.Frame(tabControl)
+tabControl.add(tab2, text='메일')
+tabControl.pack(expand=1, fill="both")
+buttonFont = font.Font(window, size=10, weight='bold', family = '맑은 고딕')
+
+def SendMail():
+    # me == 보내는 사람의 이메일 주소
+    # you == 받는 사람의 이메일 주소
+    me = mailIDEntry.get()
+    #dhtpws0170@gmail.com
+    you = mailSendEntry.get()
+    #dhtpwls0170@naver.com
+    password = mailPasswordEntry.get()
+    #fsoxfmtohvjswgst
+
+    message = MIMEMultipart()
+    message['Subject'] = 'Your Search Commpany Info!'  # 이메일 제목
+    message['From'] = me
+    message['To'] = you
+
+    for data in Job.dataList:
+        mag = MIMEText(data)
+
+    # 로컬 SMTP 서버가 없을 경우 계정이 있는 다른 서버를 사용하면 된다.
+    s = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    s.login(me, password)
+    s.sendmail(me, you, message.as_string())
+    s.quit()
+
+EmailTable = ttk.LabelFrame(tab2, text='메일')
+EmailTable.grid(column=0, row=0)
+
+mailIDLabel = Label(EmailTable, text = "ID")
+mailIDLabel.grid(column=0, row=1, pady = 2)
+mailIDEntry = Entry(EmailTable, width = 30)
+mailIDEntry.grid(column=0, row=2)
+
+mailPasswordLabel = Label(EmailTable, text = "PASSWORD")
+mailPasswordLabel.grid(column=0, row=3, pady = 3)
+mailPasswordEntry = Entry(EmailTable, width = 30)
+mailPasswordEntry.grid(column=0, row=4)
+
+LabelSpace2 = Label(EmailTable, text = " ")
+LabelSpace2.grid(column=0, row=5, pady = 10)
+
+mailLabel = Label(EmailTable, text = "보내는 주소")
+mailLabel.grid(column=0, row=8)
+mailSendEntry = Entry(EmailTable,bg="yellow", fg="black", width = 30)
+mailSendEntry.grid(column=0, row=9)
+mailButton = Button(EmailTable, font = buttonFont, text = "전송!",command=SendMail)
+mailButton.grid(column=0, row=10)
+#========================================================================================================================================
+tab3 = ttk.Frame(tabControl)
+tabControl.add(tab3, text='위치')
+tabControl.pack(expand=1, fill="both")
+
 window.mainloop()
